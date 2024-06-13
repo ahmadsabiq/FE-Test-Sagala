@@ -1,4 +1,5 @@
 <<<<<<< HEAD
+# Test Sagala FE Developer - Ahmad Sabiq
 # Teknologi yang digunakan
 1. React Js
 2. HTML,CSS,JavaScript

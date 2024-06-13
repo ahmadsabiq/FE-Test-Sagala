@@ -1,5 +1,7 @@
 /* eslint-disable */
+import React, { useMemo, useState } from "react";
 import {
+  Button,
   Flex,
   Progress,
   Table,
@@ -10,20 +12,21 @@ import {
   Thead,
   Tr,
   useColorModeValue,
-  Button
+  IconButton,
 } from "@chakra-ui/react";
 
 // Custom components
 import Card from "components/card/Card";
 import { AndroidLogo, AppleLogo, WindowsLogo } from "components/icons/Icons";
 import Menu from "components/menu/MainMenu";
-import React, { useMemo, useState } from "react";
 import {
   useGlobalFilter,
   usePagination,
   useSortBy,
   useTable,
 } from "react-table";
+import AddRowModal from "./CRUD/AddRowModal"; // Import the AddRowModal component
+import { DeleteIcon } from '@chakra-ui/icons'; // Import DeleteIcon
 
 export default function DevelopmentTable(props) {
   const { columnsData, tableData } = props;
@@ -80,9 +83,7 @@ export default function DevelopmentTable(props) {
         <Menu />
       </Flex>
       <Flex px='25px' mb='20px' justify='space-between'>
-        <Button onClick={() => addRow({ name: "New Project", tech: ["apple"], date: "2024-01-01", progress: 0 })}>
-          Add Row
-        </Button>
+        <AddRowModal onAddRow={addRow} /> {/* Use the AddRowModal component */}
       </Flex>
       <Table {...getTableProps()} variant='simple' color='gray.500' mb='24px'>
         <Thead>
@@ -103,6 +104,7 @@ export default function DevelopmentTable(props) {
                   </Flex>
                 </Th>
               ))}
+              <Th borderColor={borderColor}></Th>
             </Tr>
           ))}
         </Thead>
@@ -194,9 +196,11 @@ export default function DevelopmentTable(props) {
                   );
                 })}
                 <Td borderColor='transparent'>
-                  <Button onClick={() => removeRow(row.index)}>
-                    Remove
-                  </Button>
+                  <IconButton color="red.500"
+                    icon={<DeleteIcon />} 
+                    onClick={() => removeRow(row.index)} 
+                    aria-label="Remove Row"
+                  />
                 </Td>
               </Tr>
             );

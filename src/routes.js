@@ -1,13 +1,6 @@
 import React from "react";
-
 import { Icon } from "@chakra-ui/react";
-import {
-  MdBarChart,
-  MdPerson,
-  MdHome,
-  MdLock,
-  MdOutlineShoppingCart,
-} from "react-icons/md";
+import { MdBarChart, MdPerson, MdHome, MdLock, MdOutlineShoppingCart } from "react-icons/md";
 
 // Admin Imports
 import MainDashboard from "views/admin/default";

@@ -1,3 +1,4 @@
+import React, { useMemo, useState } from 'react';
 import {
   Flex,
   Table,
@@ -8,28 +9,35 @@ import {
   Thead,
   Tr,
   useColorModeValue,
-} from "@chakra-ui/react";
-import React, { useMemo } from "react";
+  IconButton,
+  useToast,
+} from '@chakra-ui/react';
+import { DeleteIcon } from '@chakra-ui/icons';
 import {
   useGlobalFilter,
   usePagination,
   useSortBy,
   useTable,
-} from "react-table";
+} from 'react-table';
 
 // Custom components
-import Card from "components/card/Card";
-import Menu from "components/menu/MainMenu";
+import Card from 'components/card/Card';
+import AddRowModalColumnTable from './CRUD/AddRowModalColumnTable';
+import SearchInput from './searchinput/SearchInput';
+
 export default function ColumnsTable(props) {
   const { columnsData, tableData } = props;
+  const toast = useToast();
 
   const columns = useMemo(() => columnsData, [columnsData]);
-  const data = useMemo(() => tableData, [tableData]);
+  const [data, setData] = useState(tableData);
+  const [globalFilter, setGlobalFilter] = useState('');
 
   const tableInstance = useTable(
     {
       columns,
       data,
+      initialState: { globalFilter },
     },
     useGlobalFilter,
     useSortBy,
@@ -42,12 +50,41 @@ export default function ColumnsTable(props) {
     headerGroups,
     page,
     prepareRow,
-    initialState,
+    setGlobalFilter: setFilter,
+    state,
   } = tableInstance;
-  initialState.pageSize = 5;
+  state.pageSize = 5;
 
   const textColor = useColorModeValue("secondaryGray.900", "white");
   const borderColor = useColorModeValue("gray.200", "whiteAlpha.100");
+
+  const addRow = (newRow) => {
+    setData((prevData) => [...prevData, { ...newRow }]);
+    toast({
+      title: 'Row added.',
+      description: 'The row has been added successfully.',
+      status: 'success',
+      duration: 3000,
+      isClosable: true,
+    });
+  };
+
+  const removeRow = (rowIndex) => {
+    setData((prevData) => prevData.filter((row, index) => index !== rowIndex));
+    toast({
+      title: 'Row removed.',
+      description: 'The row has been removed successfully.',
+      status: 'info',
+      duration: 3000,
+      isClosable: true,
+    });
+  };
+
+  const handleSearch = (value) => {
+    setFilter(value || '');
+    setGlobalFilter(value);
+  };
+
   return (
     <Card
       direction='column'
@@ -60,9 +97,15 @@ export default function ColumnsTable(props) {
           fontSize='22px'
           fontWeight='700'
           lineHeight='100%'>
-          4-Column Table
+          Columns Table
         </Text>
-        <Menu />
+        <AddRowModalColumnTable onAddRow={addRow} />
+      </Flex>
+      <Flex px='25px' mb='20px' justify='space-between'>
+        <SearchInput
+          value={globalFilter}
+          onChange={handleSearch}
+        />
       </Flex>
       <Table {...getTableProps()} variant='simple' color='gray.500' mb='24px'>
         <Thead>
@@ -83,63 +126,74 @@ export default function ColumnsTable(props) {
                   </Flex>
                 </Th>
               ))}
+              <Th borderColor={borderColor}></Th>
             </Tr>
           ))}
         </Thead>
         <Tbody {...getTableBodyProps()}>
-          {page.map((row, index) => {
-            prepareRow(row);
-            return (
-              <Tr {...row.getRowProps()} key={index}>
-                {row.cells.map((cell, index) => {
-                  let data = "";
-                  if (cell.column.Header === "NAME") {
-                    data = (
-                      <Flex align='center'>
+          {page.length === 0 ? (
+            <Tr>
+              <Td colSpan={columns.length + 1} textAlign="center">
+                <Text color={textColor} fontSize='sm' fontWeight='700'>
+                  Name not found
+                </Text>
+              </Td>
+            </Tr>
+          ) : (
+            page.map((row, rowIndex) => {
+              prepareRow(row);
+              return (
+                <Tr {...row.getRowProps()} key={rowIndex}>
+                  {row.cells.map((cell, index) => {
+                    let data = "";
+                    if (cell.column.Header === "NAME") {
+                      data = (
                         <Text color={textColor} fontSize='sm' fontWeight='700'>
                           {cell.value}
                         </Text>
-                      </Flex>
-                    );
-                  } else if (cell.column.Header === "PROGRESS") {
-                    data = (
-                      <Flex align='center'>
-                        <Text
-                          me='10px'
-                          color={textColor}
-                          fontSize='sm'
-                          fontWeight='700'>
+                      );
+                    } else if (cell.column.Header === "PROGRESS") {
+                      data = (
+                        <Text color={textColor} fontSize='sm' fontWeight='700'>
                           {cell.value}%
                         </Text>
-                      </Flex>
+                      );
+                    } else if (cell.column.Header === "QUANTITY") {
+                      data = (
+                        <Text color={textColor} fontSize='sm' fontWeight='700'>
+                          {cell.value}
+                        </Text>
+                      );
+                    } else if (cell.column.Header === "DATE") {
+                      data = (
+                        <Text color={textColor} fontSize='sm' fontWeight='700'>
+                          {cell.value}
+                        </Text>
+                      );
+                    }
+                    return (
+                      <Td
+                        {...cell.getCellProps()}
+                        key={index}
+                        fontSize={{ sm: "14px" }}
+                        minW={{ sm: "150px", md: "200px", lg: "auto" }}
+                        borderColor='transparent'>
+                        {data}
+                      </Td>
                     );
-                  } else if (cell.column.Header === "QUANTITY") {
-                    data = (
-                      <Text color={textColor} fontSize='sm' fontWeight='700'>
-                        {cell.value}
-                      </Text>
-                    );
-                  } else if (cell.column.Header === "DATE") {
-                    data = (
-                      <Text color={textColor} fontSize='sm' fontWeight='700'>
-                        {cell.value}
-                      </Text>
-                    );
-                  }
-                  return (
-                    <Td
-                      {...cell.getCellProps()}
-                      key={index}
-                      fontSize={{ sm: "14px" }}
-                      minW={{ sm: "150px", md: "200px", lg: "auto" }}
-                      borderColor='transparent'>
-                      {data}
-                    </Td>
-                  );
-                })}
-              </Tr>
-            );
-          })}
+                  })}
+                  <Td borderColor='transparent'>
+                    <IconButton 
+                      colorScheme="red"
+                      icon={<DeleteIcon />} 
+                      onClick={() => removeRow(row.index)} 
+                      aria-label="Remove Row"
+                    />
+                  </Td>
+                </Tr>
+              );
+            })
+          )}
         </Tbody>
       </Table>
     </Card>

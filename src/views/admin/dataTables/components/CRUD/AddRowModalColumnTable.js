@@ -11,20 +11,18 @@ import {
   FormControl,
   FormLabel,
   Input,
-  Checkbox,
   useDisclosure,
   IconButton,
   useToast,
   FormErrorMessage,
-  Flex,
 } from '@chakra-ui/react';
 import { AddIcon } from '@chakra-ui/icons';
 
-const AddRowModalCheckTable = ({ onAddRow }) => {
+const AddRowModalColumnTable = ({ onAddRow }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const toast = useToast();
   const [newRow, setNewRow] = useState({
-    name: ['', false],
+    name: '',
     date: '',
     quantity: 0,
     progress: 0,
@@ -32,15 +30,10 @@ const AddRowModalCheckTable = ({ onAddRow }) => {
   const [errors, setErrors] = useState({});
 
   const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    if (type === 'checkbox') {
-      setNewRow((prevRow) => ({
-        ...prevRow,
-        name: [prevRow.name[0], checked],
-      }));
-    } else if (name === 'progress') {
-        const progressValue = Math.min(100, Math.max(0, value));
-        setNewRow((prevRow) => ({ ...prevRow, [name]: progressValue }));
+    const { name, value } = e.target;
+    if (name === 'progress') {
+      const progressValue = Math.min(100, Math.max(0, value));
+      setNewRow((prevRow) => ({ ...prevRow, [name]: progressValue }));
     } else {
       setNewRow((prevRow) => ({ ...prevRow, [name]: value }));
     }
@@ -48,7 +41,7 @@ const AddRowModalCheckTable = ({ onAddRow }) => {
 
   const validate = () => {
     const tempErrors = {};
-    if (!newRow.name[0]) tempErrors.name = "Name is required.";
+    if (!newRow.name) tempErrors.name = "Name is required.";
     if (!newRow.date) tempErrors.date = "Date is required.";
     setErrors(tempErrors);
     return Object.keys(tempErrors).length === 0;
@@ -57,7 +50,7 @@ const AddRowModalCheckTable = ({ onAddRow }) => {
   const handleAddRow = () => {
     if (validate()) {
       onAddRow({ ...newRow }); // Ensure a new object is passed
-      setNewRow({ name: ['', false], date: '', quantity: 0, progress: 0 });
+      setNewRow({ name: '', date: '', quantity: 0, progress: 0 });
       setErrors({});
       onClose();
       toast({
@@ -93,16 +86,7 @@ const AddRowModalCheckTable = ({ onAddRow }) => {
           <ModalBody>
             <FormControl isInvalid={!!errors.name}>
               <FormLabel>Name</FormLabel>
-              <Flex align="center">
-                <Checkbox
-                  isChecked={newRow.name[1]}
-                  onChange={handleChange}
-                  name="nameCheckbox"
-                  colorScheme="brandScheme"
-                  mr="10px"
-                />
-                <Input name="name" value={newRow.name[0]} onChange={(e) => setNewRow((prevRow) => ({ ...prevRow, name: [e.target.value, prevRow.name[1]] }))} />
-              </Flex>
+              <Input name="name" value={newRow.name} onChange={handleChange} />
               {errors.name && <FormErrorMessage>{errors.name}</FormErrorMessage>}
             </FormControl>
             <FormControl mt={4} isInvalid={!!errors.date}>
@@ -154,4 +138,4 @@ const AddRowModalCheckTable = ({ onAddRow }) => {
   );
 };
 
-export default AddRowModalCheckTable;
+export default AddRowModalColumnTable;

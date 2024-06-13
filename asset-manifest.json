@@ -1,15 +1,15 @@
 {
   "files": {
-    "main.css": "/fe-test-sagala/static/css/main.39486b67.css",
-    "main.js": "/fe-test-sagala/static/js/main.658fa9ac.js",
-    "static/media/auth.png": "/fe-test-sagala/static/media/auth.20d5979b439e1531640d.png",
-    "static/media/Navbar.png": "/fe-test-sagala/static/media/Navbar.f96a9f58c491b9acda99.png",
-    "index.html": "/fe-test-sagala/index.html",
-    "main.39486b67.css.map": "/fe-test-sagala/static/css/main.39486b67.css.map",
-    "main.658fa9ac.js.map": "/fe-test-sagala/static/js/main.658fa9ac.js.map"
+    "main.css": "/FE-Test-Sagala/static/css/main.39486b67.css",
+    "main.js": "/FE-Test-Sagala/static/js/main.db97c4f6.js",
+    "static/media/auth.png": "/FE-Test-Sagala/static/media/auth.20d5979b439e1531640d.png",
+    "static/media/Navbar.png": "/FE-Test-Sagala/static/media/Navbar.f96a9f58c491b9acda99.png",
+    "index.html": "/FE-Test-Sagala/index.html",
+    "main.39486b67.css.map": "/FE-Test-Sagala/static/css/main.39486b67.css.map",
+    "main.db97c4f6.js.map": "/FE-Test-Sagala/static/js/main.db97c4f6.js.map"
   },
   "entrypoints": [
     "static/css/main.39486b67.css",
-    "static/js/main.658fa9ac.js"
+    "static/js/main.db97c4f6.js"
   ]
 }

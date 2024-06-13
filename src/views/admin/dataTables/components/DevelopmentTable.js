@@ -10,12 +10,14 @@ import {
   Thead,
   Tr,
   useColorModeValue,
+  Button
 } from "@chakra-ui/react";
+
 // Custom components
 import Card from "components/card/Card";
 import { AndroidLogo, AppleLogo, WindowsLogo } from "components/icons/Icons";
 import Menu from "components/menu/MainMenu";
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import {
   useGlobalFilter,
   usePagination,
@@ -27,7 +29,7 @@ export default function DevelopmentTable(props) {
   const { columnsData, tableData } = props;
 
   const columns = useMemo(() => columnsData, [columnsData]);
-  const data = useMemo(() => tableData, [tableData]);
+  const [data, setData] = useState(tableData);
 
   const tableInstance = useTable(
     {
@@ -52,6 +54,15 @@ export default function DevelopmentTable(props) {
   const textColor = useColorModeValue("secondaryGray.900", "white");
   const iconColor = useColorModeValue("secondaryGray.500", "white");
   const borderColor = useColorModeValue("gray.200", "whiteAlpha.100");
+
+  const addRow = (newRow) => {
+    setData((prevData) => [...prevData, newRow]);
+  };
+
+  const removeRow = (index) => {
+    setData((prevData) => prevData.filter((row, i) => i !== index));
+  };
+
   return (
     <Card
       direction='column'
@@ -67,6 +78,11 @@ export default function DevelopmentTable(props) {
           Development Table
         </Text>
         <Menu />
+      </Flex>
+      <Flex px='25px' mb='20px' justify='space-between'>
+        <Button onClick={() => addRow({ name: "New Project", tech: ["apple"], date: "2024-01-01", progress: 0 })}>
+          Add Row
+        </Button>
       </Flex>
       <Table {...getTableProps()} variant='simple' color='gray.500' mb='24px'>
         <Thead>
@@ -177,6 +193,11 @@ export default function DevelopmentTable(props) {
                     </Td>
                   );
                 })}
+                <Td borderColor='transparent'>
+                  <Button onClick={() => removeRow(row.index)}>
+                    Remove
+                  </Button>
+                </Td>
               </Tr>
             );
           })}
